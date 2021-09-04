@@ -1,0 +1,32 @@
+{
+  "scripts": {
+    "start": "nodemon --exec 'ts-node example/index.ts' --watch example --watch src --ext ts,json"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  },
+  "dependencies": {
+    "@elastic/elasticsearch": "^7.13.0",
+    "@openapitools/openapi-generator-cli": "^2.3.3",
+    "@types/node": "^15.12.2",
+    "@types/node-fetch": "^2.5.12",
+    "avsc": "^5.7.0",
+    "express": "^4.17.1",
+    "express-graphql": "^0.12.0",
+    "fp-ts": "^2.11.1",
+    "graphql": "^15.5.0",
+    "jest": "^27.0.4",
+    "lodash": "^4.17.21",
+    "node-fetch": "^2.6.1",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.12",
+    "@types/jest": "^26.0.23",
+    "@types/lodash": "^4.14.170",
+    "nodemon": "^2.0.7",
+    "ts-jest": "^27.0.3"
+  }
+}
