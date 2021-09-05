@@ -1,10 +1,72 @@
+import { GraphQLFloat, GraphQLInt, GraphQLNonNull, GraphQLString } from 'graphql';
+import { GraphQLInputObjectType } from 'graphql/type/definition';
+import { ComputedField } from '../src/handlers/handler-types';
 import { ServerConfig } from '../src/server-config';
-import { Property } from './data';
-import data from './data.json';
+import { Property } from './generate-data';
+
+const fullAddress: ComputedField<Property> = {
+  toGraphQLField: {
+    type: GraphQLString,
+    resolve: (data: Property): string => (
+      `${data.streetNumber} ${data.streetName} ${data.streetType}, ${data.suburb} ${data.postcode}`
+    ),
+  },
+};
+
+interface SimilarityFieldArgs {
+  bedrooms: number;
+  bathrooms: number;
+  carSpaces: number;
+}
+
+const similarity: ComputedField<Property, SimilarityFieldArgs, SimilarityFieldArgs, SimilarityFieldArgs> = {
+  // toGraphQLField: {
+  //   type: GraphQLFloat,
+  //   args: {
+  //     bedrooms: { type: new GraphQLNonNull(GraphQLInt) },
+  //     bathrooms: { type: new GraphQLNonNull(GraphQLInt) },
+  //     carSpaces: { type: new GraphQLNonNull(GraphQLInt) },
+  //   },
+  //   resolve: (data, args) => (
+  //     3 * Math.abs(data.bedrooms - args.bedrooms)
+  //       + 2 * Math.abs(data.bathrooms - args.bathrooms)
+  //       + 1.5 * Math.abs(data.carSpaces - args.carSpaces)
+  //   ),
+  // },
+  toGraphQLFieldOrderArg: {
+    type: new GraphQLInputObjectType({
+      name: 'SimilarityOrder',
+      fields: {
+        bedrooms: { type: new GraphQLNonNull(GraphQLInt) },
+        bathrooms: { type: new GraphQLNonNull(GraphQLInt) },
+        carSpaces: { type: new GraphQLNonNull(GraphQLInt) },
+      },
+    }),
+  },
+  toElasticsearchSort: (path, params) => [{
+    _script: {
+      order: 'asc',
+      type: 'number',
+      script: {
+        params,
+        source: `
+          return 3 * Math.abs(doc['bedrooms'].value - params.bedrooms)
+            + 2 * Math.abs(doc['bathrooms'].value - params.bathrooms)
+            + 1.5 * Math.abs(doc['carSpaces'].value - params.carSpaces)
+        `,
+      },
+    }
+  }]
+};
 
 export const serverConfig: ServerConfig = {
+  database: {
+    url: 'http://localhost:9200',
+  },
   datasets: {
     properties: {
+      source: { index: 'properties' },
+      computedFields: { fullAddress, similarity },
       baseAvroSchema: {
         name: 'Property',
         type: 'record',
@@ -22,29 +84,6 @@ export const serverConfig: ServerConfig = {
           { name: 'avmPrice', type: 'int' },
         ],
       },
-      computedFields: {
-        fullAddress: {
-          type: 'string',
-          arguments: {},
-          source: (object: Property): string => (
-            `${object.streetNumber} ${object.streetName} ${object.streetType}, ${object.suburb} ${object.postcode}`
-          ),
-        },
-        similarity: {
-          type: 'float',
-          arguments: {
-            bedroomCount: 'int',
-            bathroomCount: 'int',
-            carSpacesCount: 'int',
-          },
-          source: (object: Property, args: { bedroomCount: number, bathroomCount: number, carSpacesCount: number }) => {
-            return 3 * Math.abs(object.bedrooms - args.bedroomCount)
-              + 2 * Math.abs(object.bathrooms - args.bathroomCount)
-              + 1.5 * Math.abs(object.carSpaces - args.carSpacesCount);
-          },
-        },
-      },
-      source: { data },
     },
   },
-}
+};

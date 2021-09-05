@@ -1,9 +1,13 @@
 import { ServerConfig } from '../src/server-config';
-import data from './data.json';
 
 export const serverConfig: ServerConfig = {
+  database: {
+    url: 'http://localhost:9200',
+  },
   datasets: {
     properties: {
+      source: { index: 'properties' },
+      computedFields: {},
       baseAvroSchema: {
         name: 'Property',
         type: 'record',
@@ -20,8 +24,6 @@ export const serverConfig: ServerConfig = {
           { name: 'carSpaces', type: 'int' },
         ],
       },
-      computedFields: {},
-      source: { data },
     },
   },
 }

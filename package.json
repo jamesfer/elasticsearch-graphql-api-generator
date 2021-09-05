@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "generate-data": "ts-node example/generate-data.ts",
     "start": "nodemon --exec 'ts-node example/index.ts' --watch example --watch src --ext ts,json"
   },
   "jest": {
@@ -7,18 +8,18 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@elastic/elasticsearch": "^7.13.0",
-    "@openapitools/openapi-generator-cli": "^2.3.3",
+    "@elastic/elasticsearch": "^7.14.1",
     "@types/node": "^15.12.2",
-    "@types/node-fetch": "^2.5.12",
+    "@types/node-fetch": "^2",
     "avsc": "^5.7.0",
     "express": "^4.17.1",
     "express-graphql": "^0.12.0",
     "fp-ts": "^2.11.1",
     "graphql": "^15.5.0",
+    "ix": "^4.5.0",
     "jest": "^27.0.4",
     "lodash": "^4.17.21",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2",
     "ts-node": "^10.0.0",
     "typescript": "^4.3.2"
   },

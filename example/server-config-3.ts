@@ -1,10 +1,25 @@
+import { GraphQLString } from 'graphql';
 import { ServerConfig } from '../src/server-config';
-import { Property } from './data';
-import data from './data.json';
+import { ComputedField } from '../src/handlers/handler-types';
+import { Property } from './generate-data';
+
+const fullAddress: ComputedField<Property> = {
+  toGraphQLField: {
+    type: GraphQLString,
+    resolve: (data: Property): string => (
+      `${data.streetNumber} ${data.streetName} ${data.streetType}, ${data.suburb} ${data.postcode}`
+    ),
+  },
+};
 
 export const serverConfig: ServerConfig = {
+  database: {
+    url: 'http://localhost:9200',
+  },
   datasets: {
     properties: {
+      source: { index: 'properties' },
+      computedFields: { fullAddress },
       baseAvroSchema: {
         name: 'Property',
         type: 'record',
@@ -22,16 +37,6 @@ export const serverConfig: ServerConfig = {
           { name: 'avmPrice', type: 'int' },
         ],
       },
-      computedFields: {
-        fullAddress: {
-          type: 'string',
-          arguments: {},
-          source: (object: Property): string => (
-            `${object.streetNumber} ${object.streetName} ${object.streetType}, ${object.suburb} ${object.postcode}`
-          ),
-        }
-      },
-      source: { data },
     },
   },
 }

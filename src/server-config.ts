@@ -1,9 +1,5 @@
 import { schema } from 'avsc';
-import { ComputedField } from './version2/handlers/handler-types';
-
-export interface InlineDataSource {
-  data: any[];
-}
+import { ComputedField } from './handlers/handler-types';
 
 export interface ElasticsearchDataSource {
   index: string;

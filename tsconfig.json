@@ -5,6 +5,8 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "module": "CommonJS",
     "lib": [
       "ES2020"
     ]

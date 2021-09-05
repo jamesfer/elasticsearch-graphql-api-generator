@@ -1,6 +1,8 @@
 import { createServer } from '../src/server';
 import { serverConfig } from './server-config-4';
 
-createServer(serverConfig).listen(3000, () => {
-  console.log('Server started');
+const port = 3000;
+
+createServer(serverConfig).listen(port, () => {
+  console.log(`Server started on port ${port}`);
 });
